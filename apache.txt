@@ -1,0 +1,60 @@
+# ...
+# Отключение заголовка Server и следа
+ServerTokens Prod
+ServerSignature Off
+TraceEnable off
+
+# Установка защиты от XSS | XSS protection
+Header always set X-XSS-Protection "1; mode=block"
+# Установка защиты от неожиданного типа контента | Installation of protection against unexpected content
+Header always set X-Content-Type-Options "nosniff"
+# Установка защиты от кросс-доменной фрейминга | Installation of protection against cross-domain framing
+Header always set X-Frame-Options "SAMEORIGIN"
+
+# Включение mod_security | Enabling mod_security
+<IfModule mod_security2.c>
+    # Включение движка правил mod_security | Enabling the mod_security rule engine
+    SecRuleEngine On
+    # Включение доступа к телу запроса | Enabling access to the request body
+    SecRequestBodyAccess On
+    # Включение доступа к телу ответа | Enabling access to the request body
+    SecResponseBodyAccess On
+    # Типы MIME, для которых разрешен доступ к телу ответа | MIME types for which access to the response body is allowed
+    SecResponseBodyMimeType text/plain text/html text/xml
+    # Директория для хранения данных mod_security | Directory for storing mod_security data
+    SecDataDir /var/log/modsecurity
+    # Директория для загрузки файлов | Directory for uploading files
+    SecUploadDir /tmp/
+    # Настройка обработки загруженных файлов | Configuration of processing uploaded files
+    SecUploadKeepFiles Off
+    # Включение движка аудита | Enabling the audit engine
+    SecAuditEngine RelevantOnly
+    # Настройка логирования аудита | Configuration of audit logging
+    SecAuditLogRelevantStatus "^(?:5|4(?!04))"
+    SecAuditLogParts ABIFHZ
+    SecAuditLogType Serial
+    # Разделитель аргументов | Argument separator
+    SecArgumentSeparator "&"
+    # Формат куки | Cookie format
+    SecCookieFormat 0
+    # Ограничение на использование памяти для тела запроса | Limit on memory usage for request body
+    SecRequestBodyInMemoryLimit 131072
+    # Правило обработки XML-тела запроса | Rule for processing XML request body
+    SecRule REQUEST_HEADERS:Content-Type "text/xml" \
+        "id:'200000',phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=XML"
+    # Проверка ошибок при обработке XML-тела запроса | Check for errors when processing XML request body
+    SecRule REQBODY_ERROR "!@eq 0" \
+        "id:'200001', phase:2,t:none,log,deny,status:400,msg:'Failed to parse XML request body'"
+    # Правило обработки JSON-тела запроса | Rule for processing JSON request body
+    SecRule REQUEST_HEADERS:Content-Type "application/json" \
+        "id:'200002',phase:1,t:none,t:lowercase,pass,nolog,ctl:requestBodyProcessor=JSON"
+    # Проверка ошибок при обработке XML-тела запроса | Check for errors when processing XML request body
+    SecRule REQBODY_ERROR "!@eq 0" \
+        "id:'200003', phase:2,t:none,log,deny,status:400,msg:'Failed to parse JSON request body'"
+    # Защита от LFI | LFI protection
+    SecRule REQUEST_FILENAME "\.(htaccess|htpasswd|ini|log|sh|bash|pl|py|cgi|dll)$" "phase:1,t:none,log,auditlog,deny,status:404"
+    # Защита от DDOS | DDOS protection
+    SecRule REQUEST_URI "^/(cgi-bin/|wp-login\.php)" "chain,phase:2,t:none,log,auditlog,deny,status:404,msg:'DDOS attack'"
+    SecRule REQUEST_URI "^/xmlrpc\.php" "chain,phase:2,t:none,log,auditlog,deny,status:404,msg:'DDOS at
+</IfModule>
+# ...
