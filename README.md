@@ -1,22 +1,3 @@
-<h2>Apache Config</h2>
-<h4>Configuration file for the Apache web server that sets various security-related options and enables the mod_security module.</h4>
-<p>
-• The first section of the configuration file disables the "Server" header and turns off server signature and trace. This can help to reduce the amount of information that is provided to potential attackers.<br>
-• The next section sets various headers to protect against common web-based attacks, such as cross-site scripting (XSS) and cross-site framing (XFO).<br>
-• The following section enables the mod_security module and sets various options related to its operation. Some of the notable options include:<br>
-  • Enabling the rule engine and request/response body access<br>
-  • Setting the MIME types for which response body access is allowed<br>
-  • Configuring the logging and auditing of mod_security events<br>
-  • Setting various limits and rules for processing request bodies, including XML bodies<br>
-  • LFI, DDOS protection
-</p>
-<h2>Nginx Config</h2>
-<h4>Configuration for the Nginx web server.</h4>• It is set up to listen on ports 80 and 443 for the domain "example.com". <br><p>
-• The config enables several security features such as HTTP/2, SSL/TLS <br> • strict transport security <br> • content security policy<br> • X-Frame-Options, X-XSS-Protection, X-Content-Type-Options <br>• Referrer-Policy and Feature-Policy <br>
-• It also includes a WAF(edit it), LFI protection, XSS protection and DDOS protection. <br>
-• It is important to ensure that the SSL certificate and key paths specified in the config are valid and point to the correct files, also the domain name should be updated to match the actual domain.<br><br>
-<br>Overall, these configuration files appears to be well-structured and provides a good level of protection against common web-based attacks. However, it's not guaranteed that it covers all possible security threats and it's also good practice to run regular security audits on the server.<hr></p>
-
 <h2>Apache Конфигурация</h2>
 <h4>Конфигурационный файл для веб-сервера Apache, который устанавливает различные параметры, связанные с безопасностью, и включает модуль mod_security.</h4>
 <p>
